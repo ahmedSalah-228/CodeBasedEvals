@@ -509,6 +509,8 @@ def get_bot_handle_metrics(df, skill_filter="gpt_cc_prospect"):
     
     # Calculate bot handle ratio
     total_chats = df['Conversation ID'].nunique()
+    if skill_filter == "filipina_outside" or "maidsat" in skill_filter:
+        total_chats = total_chats_with_skill
     bot_handle_ratio = (len(fully_bot_conversations) / total_chats) * 100 if total_chats > 0 else 0
     
     print(f"Total chats with {skill_filter} skill: {total_chats_with_skill}")
