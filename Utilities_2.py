@@ -1,5 +1,3 @@
-# here we calculate the first response time
-
 import pandas as pd
 from datetime import datetime
 
@@ -395,6 +393,7 @@ def compute_and_push_metrics_Repetitions(df, master_csv_path, columns_to_edit=No
         year = current_date.strftime("%Y")  # Full year
         metrics['Date'] = f"{month_name} {day}, {year}"
         metrics['Department'] = department
+        repetitions_df.to_csv(f"repetitions_df_{department.lower()}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv", index=False)  
         
         # If columns_to_edit is specified, only update those columns
         if columns_to_edit:
@@ -509,13 +508,14 @@ def get_bot_handle_metrics(df, skill_filter="gpt_cc_prospect"):
         fully_bot_conversations.append(conversation_id)
     
     # Calculate bot handle ratio
-    bot_handle_ratio = (len(fully_bot_conversations) / total_chats_with_skill) * 100 if total_chats_with_skill > 0 else 0
+    total_chats = df['Conversation ID'].nunique()
+    bot_handle_ratio = (len(fully_bot_conversations) / total_chats) * 100 if total_chats > 0 else 0
     
     print(f"Total chats with {skill_filter} skill: {total_chats_with_skill}")
     print(f"Conversations handled fully by bot: {len(fully_bot_conversations)}")
     print(f"Bot Handle Ratio: {bot_handle_ratio:.2f}%")
     
-    return total_chats_with_skill, len(fully_bot_conversations), bot_handle_ratio
+    return total_chats, len(fully_bot_conversations), bot_handle_ratio
 
 def compute_and_push_metrics_BotHandle(df, master_csv_path, columns_to_edit=None, skill_filter="gpt_cc_prospect", department="Sales"):
     """
